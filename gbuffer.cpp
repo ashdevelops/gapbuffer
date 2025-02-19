@@ -71,3 +71,34 @@ void GapBuffer::ExpandBuffer(unsigned int size)
     }
 
 }
+
+
+void GapBuffer::MoveGapToPoint()
+{
+
+
+    if (point == gapstart) {
+        return;
+    }
+
+    if (point == gapend) {
+        point = gapstart;
+        return;
+    }
+
+    // Move gap towards the left 
+    if (point < gapstart) {
+        // Move the point over by gapsize.        
+        CopyBytes(point + (gapend-gapstart), point, gapstart - point);
+        gapend -= (gapstart - point);
+        gapstart = point;
+    } else {
+        // Since point is after the gap, find distance
+        // between gapend and point and that's how
+        // much we move from gapend to gapstart.
+        CopyBytes(gapstart, gapend, point - gapend);
+        gapstart += point - gapend;
+        gapend = point;
+        point = gapstart;
+    }
+}
