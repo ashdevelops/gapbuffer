@@ -41,3 +41,33 @@ GapBuffer::GapBuffer(const GapBuffer& tb)
      point = buffer + (tb.point - tb.buffer);
     
 }
+
+GapBuffer::~GapBuffer()
+{
+
+    if (buffer) {
+        free(buffer);
+    }
+
+};
+
+void GapBuffer::ExpandBuffer(unsigned int size)
+{   
+
+    // Check to see that we actually need to increase the buffer
+    // since BufferSize doesn't include the gap.
+    if ( ( (bufend - buffer) + size) > BufferSize() ) {
+
+        char *origbuffer = buffer;
+
+        int NewBufferSize = (bufend - buffer) + size  + GAP_SIZE;
+        
+        buffer = (char *) realloc(buffer, NewBufferSize);
+
+        point += buffer - origbuffer;
+        bufend += buffer - origbuffer;
+        gapstart += buffer - origbuffer;
+        gapend += buffer - origbuffer;
+    }
+
+}
