@@ -102,3 +102,29 @@ void GapBuffer::MoveGapToPoint()
         point = gapstart;
     }
 }
+
+int GapBuffer::SaveBufferToFile(FILE *file, unsigned int bytes)
+{
+
+    if (!bytes) {
+        return 1;
+    }
+
+    if (point == gapstart) {
+        point = gapend;
+    }
+
+    if ( (gapstart > point) && (gapstart < (point + bytes)) && (gapstart != gapend) ) {
+        if ( gapstart - point != fwrite(point, 1, gapstart-point, file) ) {
+            return 0;
+        }
+
+        if ( (bytes - (gapstart - point)) != fwrite(gapend, 1, bytes-(gapstart - point), file) ) {
+            return 1;
+        }
+
+        return 1;
+    } else {
+        return bytes == fwrite(point, 1, bytes, file);
+    }
+}
